@@ -6,7 +6,7 @@ description: An overview of the response object format.
 
 The response object represents the result of a [request](request-objects.md) carried out by an adapter. Two methods on an adapter return response objects:
 
-* `send: async (request) => response` will carry out the request and return a response object.
+* `send: async (request, connection) => response` will carry out the request and return a response object.
 * `normalize: async (response, request) => response` will be given the response from `send()` and may normalize its data.
 
 An example response object:

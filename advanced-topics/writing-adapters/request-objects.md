@@ -9,7 +9,7 @@ An adapter will – in principle – be given a request object and will return a
 The methods that will come in contact with the request object are:
 
 * `serialize: async (request) => request` is given a chance to serialize the data on the request before it is sent to the service
-* `send: async (request) => response` does the actual sending for the request, and is expected to return a response object with the status of the request and any returned data.
+* `send: async (request, connection) => response` does the actual sending for the request, and is expected to return a response object with the status of the request and any returned data.
 * `normalize: async (response, request) => response` is given the request object as a reference, in case it needs any of its properties when normalizing the response object.
 
 A request object may look like this:

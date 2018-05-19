@@ -72,10 +72,12 @@ It should go without saying, that the minimal implementation is to simply return
 ### `send`
 
 ```javascript
-send: async (request) => response
+send: async (request, connection) => response
 ```
 
 Here comes the working horse. The `send()` method will receive the `request` object that has been passed through the `serialize()` method, and use it to send the relevant request to the service. How this is done is completely up to the adapter, and will most likely be very different from adapter to adapter. That is kind of the purpose …
+
+The `connection` object is the one that was returned from the `connect()` method.
 
 When completed, the method must return a response object with `status: "ok"` and any data returned from the service, if the request was a success. This will be passed to the `normalize()` method before Integreat starts using it, so any raw format is okay, as long as `normalize()` does its job of tranforming it to a structure of JavaScript basic types.
 
