@@ -45,7 +45,7 @@ Integreat authorizes a request, both its data and the request itself, against ru
 
 The `ident` might be the most interesting for an adapter, as it provides some information on the "user" that initiated the request. The `id` might be the most interesting here, as it will often hold something close to a user name, that may be used when calling the serivce, when appropriate. For requests triggered by Integreat, there will be no `id`, however, and instead a `root` property will be set to `true`.
 
-{% hint style="danger" %}
+{% hint style="warning" %}
 Further down the road, Integreat may come with identity mapping, where the internal `ident` may not be mapped to a identity id defined by the service configuration. It might be a good idea not to rely too much on the `ident` for now.
 {% endhint %}
 
