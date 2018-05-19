@@ -11,4 +11,5 @@
     * [Request objects](advanced-topics/writing-adapters/request-objects.md)
     * [Response objects](advanced-topics/writing-adapters/response-objects.md)
   * Writing authenticators
+    * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
 
