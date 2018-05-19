@@ -16,7 +16,7 @@ An adapter is basically an object with the following methods:
     connect: async (serviceOptions, auth, connection) => connection,
     serialize: async (request) => request,
     send: async (request) => response,
-    normalize: async (response) => response,
+    normalize: async (response, request) => response,
     disconnect: async (connection) => {}
 }
 ```
@@ -63,5 +63,47 @@ The most basic implementation of `connect()` would just return the `connection` 
 serialize: async (request) => request
 ```
 
+The purpose of `serialize()`, is to modify the `data` structure of the request to whatever the adapter will send to the service. Anyting that makes sense for the adapter is allowed, including keeping the data untouched.
 
+This could also be done in the `send()` method, but there are two reasons to implement this as a seperate method. First of all, it is good to have methods with limited responsibilities. It will make the adapter code clearer to understand. Secondly, this allows optimizations in Integreat in the future, e.g. if there's a need for a pattern where the same data is sent to a service several times, this data could still be serialized only once.
+
+It should go without saying, that the minimal implementation is to simply return the `request` object.
+
+### `send`
+
+```javascript
+send: async (request) => response
+```
+
+Here comes the working horse. The `send()` method will receive the `request` object that has been passed through the `serialize()` method, and use it to send the relevant request to the service. How this is done is completely up to the adapter, and will most likely be very different from adapter to adapter. That is kind of the purpose …
+
+When completed, the method must return a response object with `status: "ok"` and any data returned from the service, if the request was a success. This will be passed to the `normalize()` method before Integreat starts using it, so any raw format is okay, as long as `normalize()` does its job of tranforming it to a structure of JavaScript basic types.
+
+There are also available statuses for signaling errors, but a `response` object should be returned in any case.
+
+See the documentation on [request objects](request-objects.md#the-request-object) and [response objects](response-objects.md#the-response-object) for more details on what to expect from Integreat and what Integreat expects in return.
+
+### `normalize`
+
+```javascript
+normalize: async (response, request) => response
+```
+
+This is the counterpart to the `serialize()` method, and will transform the `data` returned in the `response` object from `send()` into a structure of plain JavaScript types.
+
+The request object is provided only for reference, in case any of its properties is needed to transform the data correctly. One use case is the `path` property frequently seen in the endpoint `options`, that specifies a subset of the data to be returned. This may also be done through normal Integreat mapping, but doing this in `normalize()` might make it more efficient, as it could drop part of the data set right away.
+
+Just as for `serialize()`, this normalization could – and can – happen in the `send()` method, but keeping it in its own method is good for seperation of concerns, i.e. cleaner code, and it allows Integreat to do optimizations in the future.
+
+The minimal implementation for `normalize()` would be, yes, you guessed it, just to return the `response` object.
+
+### `disconnect`
+
+```javascript
+disconnect: async (connection) => {}
+```
+
+Given the `connection` object, this method should do whatever is necessary to close the connection. Integreat does not give any guaranty on when this will happen. It will usually keep the connection open after completing a request, but it might decide to close it after an idle time and during a clean shut down of the system.
+
+The minimal implementation of `disconnect()` is to do nothing, and in any adapter that does not need a connection to its service, this is exactly what you'll do.
 
