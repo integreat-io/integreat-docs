@@ -9,7 +9,7 @@ description: >-
 * The adapter interface
 * A complete call cycle
 * [The request object](request-objects.md)
-* The response object
+* [The response object](response-objects.md)
 
 
 

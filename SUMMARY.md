@@ -7,4 +7,5 @@
     * Examples
 * [Writing adapters](writing-adapters/README.md)
   * [Request objects](writing-adapters/request-objects.md)
+  * [Response objects](writing-adapters/response-objects.md)
 
