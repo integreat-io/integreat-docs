@@ -105,5 +105,7 @@ disconnect: async (connection) => {}
 
 Given the `connection` object, this method should do whatever is necessary to close the connection. Integreat does not give any guaranty on when this will happen. It will usually keep the connection open after completing a request, but it might decide to close it after an idle time and during a clean shut down of the system.
 
+After calling `disconnect()`, Integreat will not reuse the `connection` object.
+
 The minimal implementation of `disconnect()` is to do nothing, and in any adapter that does not need a connection to its service, this is exactly what you'll do.
 
