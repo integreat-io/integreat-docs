@@ -15,7 +15,7 @@ An adapter is basically an object with the following methods:
     prepareEndpoint: (endpointOptions, serviceOptions) => endpointOptions,
     connect: async (serviceOptions, auth, connection) => connection,
     serialize: async (request) => request,
-    send: async (request) => response,
+    send: async (request, connection) => response,
     normalize: async (response, request) => response,
     disconnect: async (connection) => {}
 }
