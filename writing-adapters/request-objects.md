@@ -64,7 +64,7 @@ When the `request` object is passed to `serialize()`, this data may be modified 
 
 ### `endpoint`
 
-The structure of the `endpoint` object is completely up to the adapter. It is regarded as adapter internals.
+The structure of the `endpoint` object is completely up to the adapter. It is regarded as adapter internals. Keep in mind, though, that end users will specify these options when configuring a service with your adapter, so be mindful of how you define this object, and try to stay close to how other adapters do it, when appropriate.
 
 Before an `endpoint` object is provided with a request, this will have happened:
 
