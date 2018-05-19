@@ -32,14 +32,16 @@ The `options` object is the one defined on the `auth` object on the service defi
 
 If a connection is opened as part of the authentication call, it should be closed before returning, as there will be no way for Integreat to close it again otherwise.
 
-The returned `status` may be one of four string values:
+The returned `authentication` object will have a `status` property with one of the following string values:
 
-* `accepted` – the authentication were successful
-* `rejected` – the authentication call went through, but with a negative response
+* `granted` – the authentication were successful
+* `refused` – the authentication call went through, but with a negative response
 * `timeout` – the call timed out and may be retried
 * `error` – some other error occurred
 
-The method should always run the authentiation, even when the internal state indicates that it has already ran, as e.g. an authentication token may have timed out, and the method is called to refresh it.
+In case of the `error` status, an `error` property wil be set with a description of what went wrong.
+
+The `authentication` object may have other properties as well, internal to the authenticator, as long as they don't interfere with the expected `status` and potiential `error` properties.
 
 ### `isAuthenticated`
 
@@ -47,9 +49,9 @@ The method should always run the authentiation, even when the internal state ind
 isAuthenticated: (authentication) => boolean
 ```
 
-This method will simply return `true` when the internal state indicates that authentication has already been run and was successful. If not, it returns `false`. This should be done without any external calls, and it is therefore not expected to guaranty that the authentication is still valid, though it should do the best with what it has.
+This method will simply return `true` when the given `authentication` object indicates that authentication has already been run and was successful. If not, it returns `false`. This should be done without any external calls, and it is therefore not expected to guaranty that the authentication is still valid, though it should do the best with what it has.
 
-If for instance an authentication token has been retrieved, but is timed out on the server, `isAuthenticated()` should still return `true`, as it should not check with the server. If, on the other hand, the token came with an expiration time, the method should check whether this time is passed before returning `true` or `false`.
+If for instance an authentication token has been retrieved, but is timed out on the server, `isAuthenticated()` should still return `true`, as it should not check with the server. If, on the other hand, the token came with an expiration time and this is set on the `authentication` object, the method should check whether this time is passed before returning `true` or `false`.
 
 ### `asObject`
 
@@ -57,7 +59,7 @@ If for instance an authentication token has been retrieved, but is timed out on 
 asObject: (authentication) => ({ ... })
 ```
 
-When authenticated, this method will return an object with the properties relevant for this authenticator. It depends completely on the adapter whether this makes sense or not.
+When the `status` of the `authentication` object is `granted`, this method will return an object with the properties relevant for this authenticator. It depends completely on the adapter whether this makes sense or not.
 
 As an example, the simplest authenticator is the `token` authenticator, which will accept an object with some properties and returns the same object when `asObject()` is called. An adapter may specify in its documentation that this is the authenticator it expects, and what props to set on the `options` object. For other adapters, this authenticator will not help at all.
 
@@ -71,7 +73,7 @@ Other `as...()` methods may be more useful in some cases. Read on …
 as...: (authentication) => ({ ... })
 ```
 
-As mentioned, the object returned by the authenticator may have any number of addiational `as...()` methods. They all follow the same logic as `asObject()`, but their return object may be quite different. They may not even return an object – any type that makes sense to the target adapters will do.
+As mentioned, the authenticator object may have any number of addiational `as...()` methods. They all follow the same logic as `asObject()`, but their return object may be quite different. They may not even return an object – any type that makes sense to the target adapters will do.
 
 The most common is `asHttpHeaders()`, which will transform the state of the authenticator to a set of HTTP headers. For instance, the `asHttpHeaders()` method on the `oauth2` authenticator will return an object like `{Authorization: "Bearer x8q17fr3i0"}`.
 
