@@ -4,7 +4,7 @@
 * Introduction
   * Motivation
   * Core Concepts
-    * Examples
+  * Examples
 * Advanced topics
   * [Writing adapters](advanced-topics/writing-adapters/README.md)
     * [Adapter interface](advanced-topics/writing-adapters/adapter-interface.md)
