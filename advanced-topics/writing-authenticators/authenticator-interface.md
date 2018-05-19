@@ -4,19 +4,17 @@ description: How to write an authenticator.
 
 # Authenticator interface
 
-An authenticator is essentially a function that returns an object with a specified set of methods:
+An authenticator is an object with a specified set of methods:
 
 ```javascript
-(options) => ({
-    authenticate: async () => status,
-    isAuthenticated: () => boolean,
-    asObject: () => ({ ... })
-})
+{
+    authenticate: async (options) => authentication,
+    isAuthenticated: (authentication) => boolean,
+    asObject: (authentication) => ({ ... })
+}
 ```
 
-The `options` object is the one defined by the end user on the `auth` object on the service configuration. It is completely up to eah authenticator to define what this object should hold, but keep in mind that the end user will have to set its properties, so keep an eye to what other authenticators are doing and try to stay close to the norm when appropriate.
-
-The returned instance object may be extended with other `as...()` methods to support special needs for different protocols or families of adapters. The most common one is `asHttpHeaders()`, which may be used by any adapter communicating over HTTP. For now, it is up to the end user to pick the appropriate authenticator, however, so adapters may expect an `as...()` method, but should fail with an error response or try without authentication, if the given authenticator does not support it.
+This object may be extended with other `as...()` methods to support special needs for different protocols or families of adapters, like `asHttpHeaders()`, which may be used by any adapter communicating over HTTP. See the description below.
 
 ## The authenticator methods
 
@@ -25,10 +23,12 @@ The methods are listed in logical rather than alphabetic order.
 ### `authenticate`
 
 ```javascript
-authenticate: async () => status
+authenticate: async (options) => authentication
 ```
 
-Based on the `options` given to the authenticator, the `authenticate()` method will try to authenticate with the service. This may be through a simple HTTP request, several calls to different APIs in sequence, or something completely different. Every implementation detail is up to the authenticator as long as it returns in due time with a status.
+Based on the given `options` object, the `authenticate()` method will try to authenticate with the service. This may be through a simple HTTP request, several calls to different APIs in sequence, or something completely different. Every implementation detail is up to the authenticator as long as it returns in due time with a status.
+
+The `options` object is the one defined on the `auth` object on the service definition. It is completely up to the authenticator to decide what this object should hold, but keep in mind that the end user will have to set its properties, so keep an eye to what other authenticators are doing and try to stay close to any norm when appropriate.
 
 If a connection is opened as part of the authentication call, it should be closed before returning, as there will be no way for Integreat to close it again otherwise.
 
@@ -44,7 +44,7 @@ The method should always run the authentiation, even when the internal state ind
 ### `isAuthenticated`
 
 ```javascript
-isAuthenticated: () => boolean
+isAuthenticated: (authentication) => boolean
 ```
 
 This method will simply return `true` when the internal state indicates that authentication has already been run and was successful. If not, it returns `false`. This should be done without any external calls, and it is therefore not expected to guaranty that the authentication is still valid, though it should do the best with what it has.
@@ -54,7 +54,7 @@ If for instance an authentication token has been retrieved, but is timed out on 
 ### `asObject`
 
 ```javascript
-asObject: () => ({ ... })
+asObject: (authentication) => ({ ... })
 ```
 
 When authenticated, this method will return an object with the properties relevant for this authenticator. It depends completely on the adapter whether this makes sense or not.
@@ -68,14 +68,14 @@ Other `as...()` methods may be more useful in some cases. Read on …
 ### `as...`
 
 ```javascript
-as...: () => ({ ... })
+as...: (authentication) => ({ ... })
 ```
 
 As mentioned, the object returned by the authenticator may have any number of addiational `as...()` methods. They all follow the same logic as `asObject()`, but their return object may be quite different. They may not even return an object – any type that makes sense to the target adapters will do.
 
 The most common is `asHttpHeaders()`, which will transform the state of the authenticator to a set of HTTP headers. For instance, the `asHttpHeaders()` method on the `oauth2` authenticator will return an object like `{Authorization: "Bearer x8q17fr3i0"}`.
 
-Again, it is up to adapter writers to  document what they expect from an authenticator, preferably with examples of authenticators that are known to deliver on these expectations.
+For now, it is up to the end user to pick the appropriate authenticator, however, so adapter writers should document what they expect from an authenticator, preferably with examples of authenticators that are known to deliver on these expectations. An adapter may expect an `as...()` method, but should fail with an error response or try without authentication, if the given authenticator does not support it.
 
 {% hint style="info" %}
 In the future, Integreat may specify a way for adapters to programmatically describe what kind of authenticators they need, so that Integreat might validate whether an authenticator will work or not.
