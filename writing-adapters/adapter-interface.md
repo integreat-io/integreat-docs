@@ -91,7 +91,7 @@ normalize: async (response, request) => response
 
 This is the counterpart to the `serialize()` method, and will transform the `data` returned in the `response` object from `send()` into a structure of plain JavaScript types.
 
-The request object is provided only for reference, in case any of its properties is needed to transform the data correctly. One use case is the `path` property frequently seen in the endpoint `options`, that specifies a subset of the data to be returned. This may also be done through normal Integreat mapping, but doing this in `normalize()` might make it more efficient, as it could drop part of the data set right away.
+The `request` object is provided only for reference, in case any of its properties is needed to transform the data correctly. To be clear, it is given the `request` object returned from its own `serialize()` method. One use case is the `path` property frequently seen in the endpoint `options`, that specifies a subset of the data to be returned. This may also be done through normal Integreat mapping, but doing this in `normalize()` might make it more efficient, as it could drop part of the data set right away.
 
 Just as for `serialize()`, this normalization could – and can – happen in the `send()` method, but keeping it in its own method is good for seperation of concerns, i.e. cleaner code, and it allows Integreat to do optimizations in the future.
 
