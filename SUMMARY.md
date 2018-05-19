@@ -5,9 +5,10 @@
   * Motivation
   * Core Concepts
     * Examples
-* [Writing adapters](writing-adapters/README.md)
-  * [Adapter interface](writing-adapters/adapter-interface.md)
-  * [Request objects](writing-adapters/request-objects.md)
-  * [Response objects](writing-adapters/response-objects.md)
-* Writing authenticators
+* [Advanced topics](advanced-topics/README.md)
+  * [Writing adapters](advanced-topics/writing-adapters/README.md)
+    * [Adapter interface](advanced-topics/writing-adapters/adapter-interface.md)
+    * [Request objects](advanced-topics/writing-adapters/request-objects.md)
+    * [Response objects](advanced-topics/writing-adapters/response-objects.md)
+  * Writing authenticators
 
