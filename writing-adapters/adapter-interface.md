@@ -1,5 +1,5 @@
 ---
-description: A run-trough of the methods to implement on an adapter.
+description: A run-trough of the methods needed on an adapter.
 ---
 
 # Adapter interface
