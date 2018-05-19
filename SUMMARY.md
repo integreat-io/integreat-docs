@@ -6,7 +6,7 @@
   * Core Concepts
   * Examples
 * Advanced topics
-  * [Writing adapters](advanced-topics/writing-adapters/README.md)
+  * Writing adapters
     * [Adapter interface](advanced-topics/writing-adapters/adapter-interface.md)
     * [Request objects](advanced-topics/writing-adapters/request-objects.md)
     * [Response objects](advanced-topics/writing-adapters/response-objects.md)
