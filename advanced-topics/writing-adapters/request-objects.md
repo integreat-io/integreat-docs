@@ -51,11 +51,11 @@ Further down the road, Integreat may come with identity mapping, where the inter
 
 ### `auth`
 
-While `access` is used for authorizing requests within Integreat, auth is used for authorization with the service to be called by the adapter. A service is configured with an authenticator and `authOptions`, and the `auth` object on a request is an instance of this authenticator with the `authOptions`.
+While `access` is used for authorizing requests within Integreat, `auth` is used for authorization with the external service. The `auth` object comes from the authenticator set up in the service definition, and the presice content of the object is determined by the `authentication` method set on the adapter, which refers to an actual method on the authenticator.
 
-An adapter is supposed to use the given `auth` object when calling the service, but it is up to the adapter how to do this.  `auth` objects have a common interface that provides methods for getting the needed credentials in different formats.
+Not every authenticator may be compatable with your adapter, though, and Integreat will check that the selected authenticator supports the authentication method expected by the adapter. If not, Integreat will return a response with `status: "autherror"` right away.
 
-Not every authenticator may be compatable with your adapter, though, but there are currently no  means for defining compability, you simply have to document which authenticators your adapter can use. Sometimes there is a one to one relationship between an adaptor and an authenticator, and you may have to write your own authenticator if your service has special authentication requirements.
+It is good practice to recommend one or more authenticators that may be used with an adapter, in the adapter documentation. Sometimes there is a one to one relationship between an adapter and an authenticator, and you may have to write your own authenticator if your service has special authentication requirements.
 
 ### `data`
 

@@ -60,7 +60,7 @@ connect: async (serviceOptions, auth, connection) => connection
 
 For some services, it may make sense to connect to the service before sending a request. The `connect()` method is called before every call to the `send()` method, but the `connection` object returned from the last call is provided as the third argument. You might want to do a check that the connection has not timed out, but if everything is okay, you simply return the `connection` object. On first call, `connection` will be `null`.
 
-The first argument is the `options` object from the service definition. It may hold anything your adapter needs. The second argument is an `auth` object, which is an instance of the authenticator that this service is set up with, given the `authOptions` for the service. This is the same `auth` object that you will receive on the request later on, and you may need it at this point for authentication with the service.
+The first argument is the `options` object from the service definition. It may hold anything your adapter needs. The second argument is an `auth` object, which is the same `auth` object you will receive on the request later on, and you may need it at this point for authentication with the service.
 
 The returned connection object should have a `status` property, with one of the following values depending on how the connection attempt went:
 
