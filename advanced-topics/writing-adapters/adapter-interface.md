@@ -8,10 +8,11 @@ Adapters are the reason Integreat can do what it does, and as more adapters are 
 
 The guiding principles has therefore been to leave as much of the implementation details as possible open to the adapter implementations, but to be clear on what information an adapter will get from Integreat and what Integreat expects to get back. An important part of this is the lack of specification for the the `options` objects in the configuration of the endpoints and the service itself.
 
-An adapter is basically an object with the following methods:
+An adapter is basically an object with the following properties and methods:
 
 ```javascript
 {
+    authentication: authMethod,
     prepareEndpoint: (endpointOptions, serviceOptions) => endpointOptions,
     connect: async (serviceOptions, auth, connection) => connection,
     serialize: async (request) => request,
@@ -23,7 +24,15 @@ An adapter is basically an object with the following methods:
 
 The order should hint at how this is used by Integreat.
 
-We'll go through every method in turn below, and talk about what each method is expected to do, but note that the only method that is required to actually do something, is the `send()` method. In the most basic implementation, all the others would simply return one of its arguments and leave it to `send()` to do all the heavy lifting. But we'll see why it might be a good idea to distribute the responsbilities.
+We'll go through every property and method in turn below, and talk about what each method is expected to do, but note that the only method that is required to actually do something, is the `send()` method. In the most basic implementation, all the others would simply return one of its arguments and leave it to `send()` to do all the heavy lifting. But we'll see why it might be a good idea to distribute the responsbilities.
+
+## The adapter properties
+
+### `authentication`
+
+The property  specifies what authentication method the adapter expects. "Method" is very literal in this case, as it directly relates to a method on an authenticator that will return authentication details in the expected format. The most common is perhaps `asHttpHeaders`, which will return an object with the necessary HTTP headers. This is the method that will be used to get the `auth` object for `connect()` and that is set on the `request` object. Integreat will check that the authenticator set in the service definition supports the authentication method of the specified adapter.
+
+The property should be `null` when no authentication is needed or supported.
 
 ## The adapter methods
 
@@ -49,11 +58,22 @@ Also, this is the only method that is given the `serviceOptions`, apart from `co
 connect: async (serviceOptions, auth, connection) => connection
 ```
 
-For some services, it may make sense to connect to the service before sending a request. The upside of having this as a seperate method, is that Integreat will remember the `connection` object – which might be anything – between calls. An adapter should be stateless, so this is the only way to avoid connecting every time.
+For some services, it may make sense to connect to the service before sending a request. The `connect()` method is called before every call to the `send()` method, but the `connection` object returned from the last call is provided as the third argument. You might want to do a check that the connection has not timed out, but if everything is okay, you simply return the `connection` object. On first call, `connection` will be `null`.
 
-The `connect()` method is called before every call to the `send()` method, but the `connection` object returned from the last call is provided as the third argument. You might want to do a check that the connection has not timed out, but if everything is okay, you simply return the `connection` object. On first call, `connection` will be `null`.
+The first argument is the `options` object from the service definition. It may hold anything your adapter needs. The second argument is an `auth` object, which is an instance of the authenticator that this service is set up with, given the `authOptions` for the service. This is the same `auth` object that you will receive on the request later on, and you may need it at this point for authentication with the service.
 
-The first argument is the `options` object from the service definition. It may hold anything your adapter needs. The second argument is an `auth` object, which is an instance of the authenticator that this service is set up with, given the `authOptions` for the service. This is the same `auth` object that you will receive on the request later on, and you may need it for authentication with the service.
+The returned connection object should have a `status` property, with one of the following values depending on how the connection attempt went:
+
+* `ok`: Connection established
+* `notfound`: The service or connection endpoint could not be found
+* `noaction`: No connection is needed. This is the equivalent of returning `null` instead of a `connection` object
+* `timeout`: The attempt to connect timed out. Integreat will try again once
+* `noaccess`: Authentication is required or the provided auth is not enough. On this error, Integreat will try to reauthenticate and call the adapter again, in case the authorization has timed out. If this results in a new `noaccess` error, it will not attempted again
+* `error`: Any other error
+
+In case of an error, an `error` property with a description of the problem should also be included. Other than that, the object may hold wathever the adapter needs to use the connection in the `send()` method.
+
+The upside of having this as a seperate method, is that Integreat will remember the `connection` object – which might be anything – between calls. An adapter should be stateless, so this is the only way to avoid connecting every time.
 
 The most basic implementation of `connect()` would just return the `connection` object it is given.
 
