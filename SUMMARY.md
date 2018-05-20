@@ -2,7 +2,7 @@
 
 * [Introduction](README.md)
 * Introduction
-  * Motivation
+  * [Motivation](introduction/motivation.md)
   * Core Concepts
   * Examples
 * Advanced topics
