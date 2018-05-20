@@ -10,11 +10,11 @@ An authenticator is an object with a specified set of methods:
 {
     authenticate: async (options) => authentication,
     isAuthenticated: (authentication) => boolean,
-    asObject: (authentication) => ({ ... })
+    as...: (authentication) => ({ ... })
 }
 ```
 
-This object may be extended with other `as...()` methods to support special needs for different protocols or families of adapters, like `asHttpHeaders()`, which may be used by any adapter communicating over HTTP. See the description below.
+This object may be extended with as many `as...()` methods as relevant for the different protocols or families of adapters the authenticator supports. An example is the `asHttpHeaders()`, which may be used by any adapter communicating over HTTP. See the description below.
 
 ## The authenticator methods
 
@@ -61,9 +61,7 @@ asObject: (authentication) => ({ ... })
 
 When the `status` of the `authentication` object is `granted`, this method will return an object with the properties relevant for this authenticator. It depends completely on the adapter whether this makes sense or not.
 
-As an example, the simplest authenticator is the `token` authenticator, which will accept an object with some properties and returns the same object when `asObject()` is called. An adapter may specify in its documentation that this is the authenticator it expects, and what props to set on the `options` object. For other adapters, this authenticator will not help at all.
 
-Another authenticator may call an external service to retrieve a token, and when `asObject()` is called, it returns the object `{token: "x8q17fr3i0"}`, as an random example. Depending on the adapter, this may or may not make sense.
 
 Other `as...()` methods may be more useful in some cases. Read on …
 
@@ -73,13 +71,13 @@ Other `as...()` methods may be more useful in some cases. Read on …
 as...: (authentication) => ({ ... })
 ```
 
-As mentioned, the authenticator object may have any number of addiational `as...()` methods. They all follow the same logic as `asObject()`, but their return object may be quite different. They may not even return an object – any type that makes sense to the target adapters will do.
+The authenticator object may have any number of `as...()` methods. When the `status` of the `authentication` object is `granted`, these methods will return an object – or any other type that makes sense to the target adapters – with the properties or values relevant for each authenticator.
 
-The most common is `asHttpHeaders()`, which will transform the state of the authenticator to a set of HTTP headers. For instance, the `asHttpHeaders()` method on the `oauth2` authenticator will return an object like `{Authorization: "Bearer x8q17fr3i0"}`.
+The simplest authenticator is the `token` authenticator, which will accept an `options` object with some properties and return the same object when `asObject()` is called – like `{token: "x8q17fr3i0"}`, as a random example. An adapter may specify in its documentation that this is the authenticator it expects, and what props to set on the `options` object. For other adapters, this authenticator will not help at all.
 
-For now, it is up to the end user to pick the appropriate authenticator, however, so adapter writers should document what they expect from an authenticator, preferably with examples of authenticators that are known to deliver on these expectations. An adapter may expect an `as...()` method, but should fail with an error response or try without authentication, if the given authenticator does not support it.
+A common method is `asHttpHeaders()`, which will transform the `authentication` object to a set of HTTP headers. For instance, the `asHttpHeaders()` method on the `oauth2` authenticator will return an object like `{Authorization: "Bearer x8q17fr3i0"}`.
 
-{% hint style="info" %}
-In the future, Integreat may specify a way for adapters to programmatically describe what kind of authenticators they need, so that Integreat might validate whether an authenticator will work or not.
-{% endhint %}
+The authentication property on the adapter determines which `as...()` method will be used, and Integreat will throw an error when the authenticator specified in the service definition expects a method not found on the selected authenticator.
+
+Adapter writers should also document what they expect from an authenticator, preferably with examples of authenticators that are known to deliver on these expectations.
 
