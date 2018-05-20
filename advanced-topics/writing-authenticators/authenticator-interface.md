@@ -53,18 +53,6 @@ This method will simply return `true` when the given `authentication` object ind
 
 If for instance an authentication token has been retrieved, but is timed out on the server, `isAuthenticated()` should still return `true`, as it should not check with the server. If, on the other hand, the token came with an expiration time and this is set on the `authentication` object, the method should check whether this time is passed before returning `true` or `false`.
 
-### `asObject`
-
-```javascript
-asObject: (authentication) => ({ ... })
-```
-
-When the `status` of the `authentication` object is `granted`, this method will return an object with the properties relevant for this authenticator. It depends completely on the adapter whether this makes sense or not.
-
-
-
-Other `as...()` methods may be more useful in some cases. Read on …
-
 ### `as...`
 
 ```javascript
