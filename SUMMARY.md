@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * Introduction
   * [Motivation](introduction/motivation.md)
-  * Core Concepts
+  * [Core Concepts](introduction/core-concepts.md)
   * Examples
 * Advanced topics
   * Writing adapters
