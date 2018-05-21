@@ -5,7 +5,7 @@ description: >-
   APIs, depending on how you use it.
 ---
 
-# Introduction
+# Integreat
 
 {% hint style="info" %}
 This documentation is very much work in progress and is written for the upcomming 0.7 release of Integreat. For information on the 0.6 version, see [the README on Gihub](https://github.com/integreat-io/integreat).

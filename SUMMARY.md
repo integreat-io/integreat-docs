@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Introduction](README.md)
+* [Integreat](README.md)
 * Introduction
   * [Motivation](introduction/motivation.md)
   * [Core Concepts](introduction/core-concepts.md)
