@@ -5,6 +5,7 @@
   * [Motivation](introduction/motivation.md)
   * [Core Concepts](introduction/core-concepts.md)
   * Examples
+* Basics
 * Advanced topics
   * Writing adapters
     * [Adapter interface](advanced-topics/writing-adapters/adapter-interface.md)
@@ -12,4 +13,5 @@
     * [Response objects](advanced-topics/writing-adapters/response-objects.md)
   * Writing authenticators
     * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
+* API Reference
 
