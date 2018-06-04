@@ -14,4 +14,6 @@
   * Writing authenticators
     * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
 * Reference
+  * Setup and configuration
+    * [Service definitions](reference/setup-and-configuration/service-definitions.md)
 
