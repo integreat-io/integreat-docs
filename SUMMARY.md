@@ -13,5 +13,5 @@
     * [Response objects](advanced-topics/writing-adapters/response-objects.md)
   * Writing authenticators
     * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
-* API Reference
+* Reference
 
