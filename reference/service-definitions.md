@@ -1,6 +1,5 @@
 # Service definitions
 
-  
 Service definitions are at the core of Integreat, as they describe how to connect to each service, how to fetch data and map it to the relevant schemas, and how to map from schemas and send data back to the service.
 
 The service definitions object looks like this:

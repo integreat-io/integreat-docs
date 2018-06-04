@@ -15,5 +15,5 @@
     * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
 * Reference
   * [Service definitions](reference/service-definitions.md)
-* [Mapping definitions](mapping-definitions.md)
+  * [Mapping definitions](reference/mapping-definitions.md)
 
