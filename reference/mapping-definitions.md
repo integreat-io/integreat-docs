@@ -13,23 +13,24 @@ This is the full mapping definition:
   attributes: {
     <attribute id>: {
       path: <path string>,
-      transform: <transformers pipeline>
+      transform: <transform pipeline>,
+      transformTo: <transform pipeline>
     },
     ...
   },
   relationships: {
     <relationship id>: {
       path: <path string>,
-      transform: <transformers pipeline>,
-      transformTo: <transformers pipeline>
+      transform: <transform pipeline>,
+      transformTo: <transform pipeline>
     },
     ...
   },
-  qualifier: <qualifier string>,
-  mutate: <mutaters pipeline>,
-  mutateTo: <mutaters pipeline>,
-  filter: <filters pipeline>,
-  filterTo: <filters pipeline>
+  mutate: <mutate pipeline>,
+  mutateTo: <mutate pipeline>,
+  filter: <filter pipeline>,
+  filterTo: <filter pipeline>,
+  qualifier: <path string>
 }
 ```
 
@@ -92,7 +93,60 @@ The `transformTo` property takes a transformator pipeline, just as `transform`, 
 
 When `transformTo` is not specified, the `to` function on two-way transformers on the transform pipeline will be used.
 
+### `mutate`
+
+A `mutate` pipeline is much like the transformation pipeline of `attributes` and `relationships`, but instead of working on individual fileds, it may change the entire data object. A mutator is a function that accepts an object in Integreat's data format, and returns an object in Integreat's data format, but may do anything with the data as long as it doesn't break the format.
+
+Going _from_ a service, Integreat will first map and transform the individual fields, and then run the resulting object throught the mutation pipeline, applying matations from left to right, before casting it to the correct schema.
+
+When mapping back _to_ a service, any mutations will be applied to the casted object – before transforming and mapping fields. This is done by applying any `to` functions the mutators might have, from right to left.
+
+### `mutateTo`
+
+As an alternative to using the `mutate` pipeline with `to` functions, you may specify a separate pipeline for mutating _to_ a service. When a `mutateTo` pipeline is defined, the `mutate` pipeline will only be used for mutating from the service.
+
+`mutateTo` is applied exactly as the `mutate` pipeline – from right to left, after casting, before transforming and mapping fields.
+
+### `filter`
+
+The last stop for data coming from a service, is the filter pipeline, which consists of functions that – given the data object – may filter away objects by returning `false`. To be accepted into Integreat, a data object needs to get `true` from every filter function in the `filter` pipeline. Functions are applied from left to right. This has no logical consequence, as the result is ANDed, but as the filtering stops with the first `false`, any filters that are computational heavy should be placed towards the right.
+
+When no `filter` pipeline is specified, alle objects are accepted.
+
+Although it is not very common, filters may be object with `from` and `to` functions, and objects will be run through the pipeline with any `to` functions, from right to left, when going _to_ a service.
+
+Filtering _from_ a service happens after the data has been mapped, transformed, mutated, and casted, making sure that a filter function will always operate on Integreat's standard data format. Going _to_ a service, the data object is casted before the filter pipeline is applied, and the mutation, transforming, and mapping will only happen if the object passes all the filters.
+
+### `filterTo`
+
+This works as the `filter` pipeline, but  is used when going _to_ a service. A data object is casted before the `filterTo` pipeline is applied, but filtering happens before any mutation, transforming, and mapping.
+
+When a `filterTo` pipeline is specified, any `to` functions on the `filter` pipeline will be disregarded.
+
 ### `qualifier`
 
+When a service returns data for several schemas, Integreat needs a way to recognize which schema to use for each item in the data. For some services, the different schemas may be find on different paths in the data, so specifying different paths on each mapping is sufficient. But when all items are returned in one array, for instance, you need to specify qualifiers for the mappings.
 
+A qualifier is simply a path with an expression that will evaluate to `true` or `false`. If a mapping has qualifiers, it will only be applied to data that satisfies all its qualifiers. Qualifiers are applied to the data at the mapping's `path`, before it is mapped and transformed.
+
+An example of two mappings with qualifiers:
+
+```text
+...
+mappings: {
+  entry: {
+    attributes: {...},
+    qualifier: 'type="entry"'
+  },
+  admin: {
+    attributes: {...},
+    qualifier: [
+      'type="account"',
+      'permissions.roles[]="admin"'
+    ]
+  }
+}
+```
+
+When a qualifier points to an array, the qualifier returns true when at least one of the items in the array satisfies the condition.
 
