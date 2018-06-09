@@ -4,7 +4,7 @@ Endpoints – in Integreat's terms – are different ways of calling a service A
 
 Each service must have at least one endpoint defined, but there's no upper limit to how many you may set up.
 
-Endpoint definitions are included in the `endpoints` array on a [service definition](service-definitions.md), and looks like this:
+Endpoint definitions are included in the `endpoints` array on a [service definition](service-definitions.md), and will typically look like this, although some alternatives are mentioned below:
 
 ```javascript
 {
@@ -16,8 +16,7 @@ Endpoint definitions are included in the `endpoints` array on a [service definit
     params: {...}
   },
   mapping: {
-    requestPath: <path string>,
-    responsePath: <path string>,
+    path: <path string>,
     requestBody: {...}
   },
   options: {...}
@@ -53,13 +52,21 @@ The `mapping` object lets you specify mapping for the data coming from the servi
 
 Default behavior for endpoints without a `mapping` object is to leave everything to the schema mappers. The response body from the service is passed directly to the schema mappers. For requests to a service, any mapped data is sent as the request body. When there's no `mapping` object on the endpoint and no `data` in the action payload, the request will simply not have a `body`.
 
-The principles of endpoint mapping are much the same way as for schema mappings, with everything defined as going _from_ the service _to_ Integreat. The property names are a bit different, though:
+The principles of endpoint mapping are much the same way as for schema mappings, with everything defined as going _from_ the service _to_ Integreat.
 
-* `path`: This is a dot path notation on the data object coming from or going to the service, and is used to extract a part of the data that will be used for futher mapping when data is coming from the service, and to set the data going to the service.
-* `pathTo`: This is a dot path notation for Integreat's request/response object, and is seldom used.
-* `fields`: This is an object where the keys refer to properties on the `request` and/or `response` object and the value of these keys are string paths in dot notation on the body object. You may also specify a field mapping object with the string paths for the body object as a `path` property and optional `default` and `defaultRev` values. The former is used when a value is missing on the `response` object and the latter when a value is missing on the `request` object.
+#### Endpoint paths
 
-Note that the direction of this mapping is _from_ the request object _to_ the service, which is the oposite of how schema mappings are defined. The reason for this is that we're now talking about requests – _to_ the service, while schema mappings are defined from the point of view of data responses – _from_ a service.
+First of all, there is a `path` property, which is dot notation string that points to a property in the data from the service. When this is set, it is used to extract a part of the data to use, before passing it on to schema mapping. This is especially handy when several endpoints retrieves the same type of data, but wrapped in different object structures. The `path` property is also used when sending data to a service. After the data has been mapped with schema mappings, it is set on an empty object according to the `path` property.
+
+In fact, the `path` property is so commonly used that you may simple set the path string directly on the `mapping` property, when the path is all you need. `mapping: 'content.articles'` is the exact same as `mapping: { path: 'content.articles' }`.
+
+But what if it doesn't make sense to have the same path for retrieving and sending data? Instead of `path` you may use another pair of properties: `requestPath` and `responsePath`. These are just like `path`, but used for the request \(data being sent to the service\) and the response  \(data coming from the service\).
+
+#### Request object mapping
+
+The three path properties will cover most cases, but if you need more control over the data being sent to the service, there's always the `requestBody` object. It lets you define the shape of the request body, much the same way you define attributes and relationships in schema mappings. The keys of the `requestBody` object are dot path notations for properties on the request body, that are typically set to path strings for the `request` object. This means that you can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md). 
+
+
 
 Hopefully, this will all be so much clearer with an example:
 
