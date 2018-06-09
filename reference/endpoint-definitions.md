@@ -64,15 +64,41 @@ But what if it doesn't make sense to have the same path for retrieving and sendi
 
 #### Request object mapping
 
-The three path properties will cover most cases, but if you need more control over the data being sent to the service, there's always the `requestBody` object. It lets you define the shape of the request body, much the same way you define attributes and relationships in schema mappings. The keys of the `requestBody` object are dot path notations for properties on the request body, that are typically set to path strings for the `request` object. This means that you can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md). 
+The three path properties will cover most cases, but if you need more control over the data being sent to the service, there's always the `requestBody` object. It lets you define the shape of the request body, much the same way you define attributes and relationships in schema mappings. The keys of the `requestBody` object are dot path notations for properties on the request body, that are typically set to path strings for the `request` object. This means that you can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md), like `params` or the prepared `endpoint` options. 
 
-
-
-Hopefully, this will all be so much clearer with an example:
+Imagine that you have an action with a `section` param, that you would like to send to the service together with the actual `data`. Your endpoint definition would look something like this:
 
 ```javascript
-
+{
+  match: {...},
+  mapping: {
+    path: 'data',
+    requestObject: {
+      'meta.section': 'params.section',
+      'content': 'data'
+    }
+  },
+  options: {...}
+}
 ```
+
+With the action payload `{ section: 'news', data: [ { id: 'article1', type: 'article' }, { id: 'article2', type: 'article' } ] }`, this would result in the following body being sent to the service:
+
+```javascript
+{
+  meta: {
+    section: 'news'
+  },
+  content: [
+    { id: 'article1', type: 'article' },
+    { id: 'article2', type: 'article' }
+  ]
+}
+```
+
+{% hint style="info" %}
+Note that in this example we're also imagining that we have schema mappings that doesn't change the data. If we had mappings that change the data items, this would affect the data in the `content` array in the example.
+{% endhint %}
 
 ### `options`
 
