@@ -1,19 +1,20 @@
 # Table of contents
 
 * [Integreat](README.md)
-* Introduction
+* [Introduction](introduction/README.md)
   * [Motivation](introduction/motivation.md)
   * [Core Concepts](introduction/core-concepts.md)
-  * Examples
-* Basics
-* Advanced topics
-  * Writing adapters
+  * [Examples](introduction/examples.md)
+* [Basics](basics.md)
+* [Advanced topics](advanced-topics/README.md)
+  * [Writing adapters](advanced-topics/writing-adapters/README.md)
     * [Adapter interface](advanced-topics/writing-adapters/adapter-interface.md)
     * [Request objects](advanced-topics/writing-adapters/request-objects.md)
     * [Response objects](advanced-topics/writing-adapters/response-objects.md)
-  * Writing authenticators
+  * [Writing authenticators](advanced-topics/writing-authenticators/README.md)
     * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
-* Reference
+* [Reference](reference/README.md)
   * [Service definitions](reference/service-definitions.md)
   * [Mapping definitions](reference/mapping-definitions.md)
+  * [Endpoint definitions](reference/endpoint-definitions.md)
 
