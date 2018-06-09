@@ -16,9 +16,9 @@ Endpoint definitions are included in the `endpoints` array on a [service definit
     params: {...}
   },
   mapping: {
-    fields: {...},
-    path: <path string>,
-    pathTo: <path string>
+    requestPath: <path string>,
+    responsePath: <path string>,
+    requestBody: {...}
   },
   options: {...}
 }
@@ -49,15 +49,15 @@ The power you get from this, however, is the generic action-based interface to s
 
 ### `mapping`
 
-The `mapping` object lets you specify mapping for the data being sent to a service and for data coming back – for this endpoint. This works together with the schema mappings. When sending data to a service, it will first be mapped with schema mappers, before it is mapped with the endpoint mapping. Data coming from a service is first mapped with the endpoint mapping, and the result of this mapping is mapped to the relevant schemas.
+The `mapping` object lets you specify mapping for the data coming from the service and data being sent to the service – for this endpoint. This works together with the schema mappings. Data coming from a service is first mapped with the endpoint mapping, and the result of this mapping is passed on to the relevant schema mappers. When sending data to a service, it will first be mapped with schema mappers, before it is mapped with the endpoint mapping.
 
-Default behavior for endpoints without a `mapping` object is to leave everything to the schema mappers. Any mapped data is sent to the service as the request body, and the response body from the service is sent directly to the schema mapper. When there's no `mapping` object on the endpoint and no `data` in the action payload, the request will not have a `body`.
+Default behavior for endpoints without a `mapping` object is to leave everything to the schema mappers. The response body from the service is passed directly to the schema mappers. For requests to a service, any mapped data is sent as the request body. When there's no `mapping` object on the endpoint and no `data` in the action payload, the request will simply not have a `body`.
 
-The endpoint mapping works much the same way as the schema mappings, with everything defined as going _from_ the service _to_ Integreat. Details may be found in the Mapping data section, but here are a quick explanation:
+The principles of endpoint mapping are much the same way as for schema mappings, with everything defined as going _from_ the service _to_ Integreat. The property names are a bit different, though:
 
-* `fields`: This is an object where the keys refer to properties on the `request` and/or `response` object and the value of these keys are string paths in dot notation on the body object. You may also specify a field mapping object with the string paths for the body object as a `path` property and optional `default` and `defaultRev` values. The former is used when a value is missing on the `response` object and the latter when a value is missing on the `request` object.
 * `path`: This is a dot path notation on the data object coming from or going to the service, and is used to extract a part of the data that will be used for futher mapping when data is coming from the service, and to set the data going to the service.
 * `pathTo`: This is a dot path notation for Integreat's request/response object, and is seldom used.
+* `fields`: This is an object where the keys refer to properties on the `request` and/or `response` object and the value of these keys are string paths in dot notation on the body object. You may also specify a field mapping object with the string paths for the body object as a `path` property and optional `default` and `defaultRev` values. The former is used when a value is missing on the `response` object and the latter when a value is missing on the `request` object.
 
 Note that the direction of this mapping is _from_ the request object _to_ the service, which is the oposite of how schema mappings are defined. The reason for this is that we're now talking about requests – _to_ the service, while schema mappings are defined from the point of view of data responses – _from_ a service.
 
