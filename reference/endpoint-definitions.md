@@ -15,10 +15,9 @@ Endpoint definitions are included in the `endpoints` array on a [service definit
     request: <request type>,
     params: {...}
   },
-  mapping: {
-    path: <path string>,
-    requestBody: {...}
-  },
+  requestMapping: {...},
+  requestPath: <path string>,
+  responsePath: <path string>
   options: {...}
 }
 ```
@@ -46,43 +45,42 @@ Defining a `match` object is not the easiest part of Integreat, and if you're no
 
 The power you get from this, however, is the generic action-based interface to services and data sources, where you can access their data without knowing anything about how they are defined.
 
-### `mapping`
+### `requestMapping`
 
-The `mapping` object lets you specify mapping for the data coming from the service and data being sent to the service – for this endpoint. This works together with the schema mappings. Data coming from a service is first mapped with the endpoint mapping, and the result of this mapping is passed on to the relevant schema mappers. When sending data to a service, it will first be mapped with schema mappers, before it is mapped with the endpoint mapping.
+The `requestMapping` object lets you shape the data being sent with the request to a service – sometimes refered to as the request body.
 
-Default behavior for endpoints without a `mapping` object is to leave everything to the schema mappers. The response body from the service is passed directly to the schema mappers. For requests to a service, any mapped data is sent as the request body. When there's no `mapping` object on the endpoint and no `data` in the action payload, the request will simply not have a `body`.
+Default behavior for endpoints without a `requestMapping` object is to send any mapped data as the request body. When there's no `requestMapping` object on the endpoint and no `data` in the action payload, the request will simply be sent without data.
 
-The principles of endpoint mapping are much the same way as for schema mappings, with everything defined as going _from_ the service _to_ Integreat.
+The keys of the `requestMapping` object are dot path notations for properties on the request body, that are typically set to path strings for the `request` object. This is the same notation as for attributes and relationships on schema mappings, but with requestMapping we are going _from_ Integreat _to_ a service.
 
-#### Endpoint paths
+You can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md), like `params` or the prepared `endpoint` options, or even `data`. Note that at this point we're talking about data that has been mapped with schema mappers.
 
-First of all, there is a `path` property, which is dot notation string that points to a property in the data from the service. When this is set, it is used to extract a part of the data to use, before passing it on to schema mapping. This is especially handy when several endpoints retrieves the same type of data, but wrapped in different object structures. The `path` property is also used when sending data to a service. After the data has been mapped with schema mappings, it is set on an empty object according to the `path` property.
-
-In fact, the `path` property is so commonly used that you may simple set the path string directly on the `mapping` property, when the path is all you need. `mapping: 'content.articles'` is the exact same as `mapping: { path: 'content.articles' }`.
-
-But what if it doesn't make sense to have the same path for retrieving and sending data? Instead of `path` you may use another pair of properties: `requestPath` and `responsePath`. These are just like `path`, but used for the request \(data being sent to the service\) and the response  \(data coming from the service\).
-
-#### Request object mapping
-
-The three path properties will cover most cases, but if you need more control over the data being sent to the service, there's always the `requestBody` object. It lets you define the shape of the request body, much the same way you define attributes and relationships in schema mappings. The keys of the `requestBody` object are dot path notations for properties on the request body, that are typically set to path strings for the `request` object. This means that you can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md), like `params` or the prepared `endpoint` options. 
-
-Imagine that you have an action with a `section` param, that you would like to send to the service together with the actual `data`. Your endpoint definition would look something like this:
+Imagine that you have an action with a `section` param, that you would like to send to the service together with the `data`. Your endpoint definition would look something like this:
 
 ```javascript
 {
   match: {...},
-  mapping: {
-    path: 'data',
-    requestObject: {
-      'meta.section': 'params.section',
-      'content': 'data'
-    }
+  requestMapping: {
+    'meta.section': 'params.section',
+    'content': 'data'
   },
   options: {...}
 }
 ```
 
-With the action payload `{ section: 'news', data: [ { id: 'article1', type: 'article' }, { id: 'article2', type: 'article' } ] }`, this would result in the following body being sent to the service:
+With the action payload ...
+
+```javascript
+{
+  section: 'news',
+  data: [
+    { id: 'article1', type: 'article' },
+    { id: 'article2', type: 'article' }
+  ]
+}
+```
+
+... this would result in the following body being sent to the service:
 
 ```javascript
 {
@@ -99,6 +97,16 @@ With the action payload `{ section: 'news', data: [ { id: 'article1', type: 'art
 {% hint style="info" %}
 Note that in this example we're also imagining that we have schema mappings that doesn't change the data. If we had mappings that change the data items, this would affect the data in the `content` array in the example.
 {% endhint %}
+
+### `requestPath`
+
+The `requestPath` property is used when sending data to a service. The data or body to send with a request – which will be the result of the `requestMapping` when present, or the `data` mapped with schema mappings – is set at the specified `requestPath` on an emtpy object.
+
+With the data `[ { id: 'ent1', type: 'entry' } ]` and `requestPath: 'content.items'`, the data sent with the request will be `{ content: { items: [ { id: 'ent1', type: 'entry' } ]`.
+
+### `responsePath`
+
+The `responsePath` is the opposite of `requestPath`, and is used to extract a part of the data coming from the service, before passing it on to schema mapping. This is especially handy when several endpoints retrieves the same type of data, but wrapped in different object structures.
 
 ### `options`
 
