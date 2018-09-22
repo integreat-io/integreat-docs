@@ -64,9 +64,9 @@ See Endpoint definitions for details.
 
 ### `mappings`
 
-A mapping defintion tells Integreat how to map between a schema and the data coming from a service or being sent to a service. You should include one mapping definition for every a schema a service can handle.
+A mapping defintion tells Integreat how to map between a schema and the data coming from a service or being sent to a service. You should include one mapping definition for every schema a service can handle.
 
-A mapping definition is set on a property matching the `id` of the schema it will map to, and could be set as a complete mapping definition object or an `id` to a mapping definition. The latter option is for reusing mapping definitions across services and schemas, or for cases when it is easier to have mapping definition in seperate files – e.g. when service definitions grow big.
+The `matching` object should have the `id` of each schema as keys, which should be set to the `id` of a mapping definition or a complete mapping definition object. The former option is for reusing mapping definitions across services and schemas, or for cases when it is easier to have mapping definition in seperate files – e.g. when service definitions grow big.
 
 See Mapping definitions for details.
 
