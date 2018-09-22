@@ -95,9 +95,9 @@ When `transformTo` is not specified, the `to` function on two-way transformers o
 
 ### `mutate`
 
-A `mutate` pipeline is much like the transformation pipeline of `attributes` and `relationships`, but instead of working on individual fileds, it may change the entire data object. A mutator is a function that accepts an object in Integreat's data format, and returns an object in Integreat's data format, but may do anything with the data as long as it doesn't break the format.
+A `mutate` pipeline is much like the transformation pipelines, but instead of working on individual fileds, it may change the entire data object. A mutator is a function that accepts an object in Integreat's data format, and returns an object in Integreat's data format, but may do anything with the data as long as it doesn't break the format.
 
-Going _from_ a service, Integreat will first map and transform the individual fields, and then run the resulting object throught the mutation pipeline, applying matations from left to right, before casting it to the correct schema.
+Going _from_ a service, Integreat will first map and transform the individual fields, cast the object to the correct schema, and then run it throught the mutation pipeline, applying matations from left to right.
 
 When mapping back _to_ a service, any mutations will be applied to the casted object – before transforming and mapping fields. This is done by applying any `to` functions the mutators might have, from right to left.
 
