@@ -4,7 +4,7 @@ description: An overview of the request object format.
 
 # Request objects
 
-An adapter will – in principle – be given a request object and will return a [response object](response-objects.md). Different methods have different responsibilities in this process, however.
+An adapter will be given a request object and will return a [response object](response-objects.md). Different methods have different responsibilities in this process, however.
 
 The methods that will come in contact with the request object are:
 
