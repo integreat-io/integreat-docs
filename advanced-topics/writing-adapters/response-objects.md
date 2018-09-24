@@ -19,13 +19,14 @@ An example response object:
         status: "granted",
         scheme: "data",
         ident: {id: "johnf"}
-    }
+    },
+    paging: { ... }
 }
 ```
 
 ## The response object
 
-### access
+### `access`
 
 The `access` object is the result of Integreat's authorization. When you create a `response` object in the `send()` method, you may simple pass on the `auth` object from the request. You may also alter it, when relevant. Your adapter may for example do its own authentication of a request from Integreat, and may return a `rejected` response right away for requests that don't pass.
 
@@ -48,6 +49,18 @@ Note that the `data` property is expected for responses with the `ok` status, bu
 ### `error`
 
 This is a string describing what went wrong. It should only be used with error statuses, and never with the `ok` status.
+
+### `paging`
+
+An adapter is not required to implement paging, but when it does, it should return a `paging` object with `next` and `prev` properties, optionally `first` and `last` properties.
+
+The content of these properties are pretty much up to each adapter, as long as it may be provided as the payload of an action to get the next, previous, etc. page of the original request. If the params of the original request are needed to retrieve other pages, they should be included on the object. If the data of the original request are needed, it should be included as a `data` prop. If any kind of cursor is needed, it should be included – typically as a `cursor` prop.
+
+Also, keep in mind that the application that requested the data in the first place may encode what you return in the `paging` properties, to include in urls etc, so make sure everything is JSON serializable.
+
+{% hint style="info" %}
+An adapter may enforce paging. If it is optional, the usual signal that the dispatching code would like to have paged data in return, is to set the `pageSize` param on the action payload.
+{% endhint %}
 
 ### `status`
 
