@@ -39,7 +39,7 @@ The returned `authentication` object will have a `status` property with one of t
 * `timeout` – the call timed out and may be retried
 * `error` – some other error occurred
 
-In case of the `error` status, an `error` property wil be set with a description of what went wrong.
+In case of the `error` status, an `error` property must be set, with a description of what went wrong.
 
 The `authentication` object may have other properties as well, internal to the authenticator, as long as they don't interfere with the expected `status` and potiential `error` properties.
 

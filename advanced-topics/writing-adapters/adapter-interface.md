@@ -30,7 +30,11 @@ We'll go through every property and method in turn below, and talk about what ea
 
 ### `authentication`
 
-The property  specifies what authentication method the adapter expects. "Method" is very literal in this case, as it directly relates to a method on an authenticator that will return authentication details in the expected format. The most common is perhaps `asHttpHeaders`, which will return an object with the necessary HTTP headers. This is the method that will be used to get the `auth` object for `connect()` and that is set on the `request` object. Integreat will check that the authenticator set in the service definition supports the authentication method of the specified adapter.
+The property  specifies what authentication method the adapter expects. "Method" is very literal in this case, as it directly relates to a method on an authenticator that will return authentication details in the expected format. The most common is perhaps `asHttpHeaders`, which will return an object with the necessary HTTP headers.
+
+The method  will be used to get an `auth` object, which will be one of the args to `connect()` and will be set on the `request` object.
+
+Integreat will check that the authenticator set in the service definition supports the authentication method of the specified adapter.
 
 The property should be `null` when no authentication is needed or supported.
 
@@ -60,7 +64,7 @@ connect: async (serviceOptions, auth, connection) => connection
 
 For some services, it may make sense to connect to the service before sending a request. The `connect()` method is called before every call to the `send()` method, but the `connection` object returned from the last call is provided as the third argument. You might want to do a check that the connection has not timed out, but if everything is okay, you simply return the `connection` object. On first call, `connection` will be `null`.
 
-The first argument is the `options` object from the service definition. It may hold anything your adapter needs. The second argument is an `auth` object, which is the same `auth` object you will receive on the request later on, and you may need it at this point for authentication with the service.
+The first argument is the `options` object from the service definition. It can hold anything your adapter needs, and it is up to each adapter to specify what this object should hold. The second argument is an `auth` object, which is the same `auth` object you will receive on the request later on, retrieved from the `as...()` method on an authenticator.
 
 The returned connection object should have a `status` property, with one of the following values depending on how the connection attempt went:
 
