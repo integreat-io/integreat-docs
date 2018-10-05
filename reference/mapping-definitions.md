@@ -1,6 +1,6 @@
 # Mapping definitions
 
-To specify how data from a service is mapped and transformed to a schema – and how to map and transform it back to the service – you set up a mapping definition, potentially with transform and mutate functions.
+To specify how data from a service is mapped and transformed to a schema – and how to map and transform it back to the service – you set up a mapping definition, potentially with transform functions.
 
 Note that mappings will be used to map data both from and to a service, and in the description below, we'll explain how this happens.
 
@@ -26,8 +26,8 @@ This is the full mapping definition:
     },
     ...
   },
-  mutate: <mutate pipeline>,
-  mutateTo: <mutate pipeline>,
+  transform: <transform pipeline>,
+  transformTo: <transform pipeline>,
   filter: <filter pipeline>,
   filterTo: <filter pipeline>,
   qualifier: <path string>
@@ -52,17 +52,17 @@ See the Path format for more on how to specify a path.
 
 ### `attributes` and `relationships`
 
-The fields of a schema is separated into `attributes` and `relationships`, and this distinction is used in mappings too, even though they are defined in the exact same way. Put simply, when a field references data items with `id` and `type` \(schema\) it's a relationship – anything else is an attribute. When mapping to a relationship, the value mapped value will be the id of the relationship. For attributes, the value is the value.
+The fields of a schema is separated into `attributes` and `relationships`, and this distinction is used in mappings too, even though they are defined in the exact same way. Put simply, when a field references data items with `id` and `type` \(schema\) it's a relationship – anything else is an attribute. When mapping to a relationship, the mapped value will be the id of the relationship. For attributes, the value is the value, so to speak.
 
 Both `attributes` and `relationships` may be defined in a short form, with a path string instead of a field definition object. `title: 'segment.headline'` is a shorter form of `title: {path: 'segments.headline'}`. This is handy when you don't need to define a `transform` pipeline.
 
-#### `path`
+#### Field: `path`
 
 The path property on `attributes` and `relationships` points to the actual value to be used for the field. If a `transform` pipeline is specified, the value will be sent through the pipeline before it is cased to the type specified in the schema.
 
 The `path` is relative to the `path` defined on the mapping itself, and will be treated in the same way: When going _from_ the service, the path is used to extract a value from the data. When going _to_ the service, the transformed value is set at the specified path on the data being sent to the service.
 
-#### `transform`
+#### Field: `transform`
 
 A `transform` pipeline defines one or more transformator functions that the mapped value will be passed through, from left to right, before being casted with the relevant type according to the schema – when mapping _from_ a service.
 
@@ -87,25 +87,25 @@ Note that transformators should prefarably be pure functions. Only when it is ab
 
 See Writing transformators for more details.
 
-#### `transformTo`
+#### Field: `transformTo`
 
 The `transformTo` property takes a transformator pipeline, just as `transform`, but will only be used for transforming a value _to_ a service. It should be used when you need to define a different pipeline for transforming field values _to_ a service. The transformattors will be applied from right to left.
 
 When `transformTo` is not specified, the `to` function on two-way transformers on the transform pipeline will be used.
 
-### `mutate`
+### `transform`
 
-A `mutate` pipeline is much like the transformation pipelines, but instead of working on individual fileds, it may change the entire data object. A mutator is a function that accepts an object in Integreat's data format, and returns an object in Integreat's data format, but may do anything with the data as long as it doesn't break the format.
+A `transform` pipeline on the item is exactly like the `transform` pipelines on fields, but it operates on the entire data object instead of individual field values. A transformer is a function that accepts an object in Integreat's data format, and returns an object in Integreat's data format, but may do anything with the data as long as it doesn't break the format.
 
-Going _from_ a service, Integreat will first map and transform the individual fields, cast the object to the correct schema, and then run it throught the mutation pipeline, applying matations from left to right.
+Going _from_ a service, Integreat will first map and transform the individual fields, cast the object to the correct schema, and then run it throught the item transform pipeline, applying transformations from left to right.
 
-When mapping back _to_ a service, any mutations will be applied to the casted object – before transforming and mapping fields. This is done by applying any `to` functions the mutators might have, from right to left.
+When mapping back _to_ a service, any transformers will be applied to the casted object – before transforming and mapping fields. This is done by applying any `to` functions the transformers might have, from right to left.
 
-### `mutateTo`
+### `transformTo`
 
-As an alternative to using the `mutate` pipeline with `to` functions, you may specify a separate pipeline for mutating _to_ a service. When a `mutateTo` pipeline is defined, the `mutate` pipeline will only be used for mutating from the service.
+As an alternative to using the `transform` pipeline with `to` functions, you may specify a separate pipeline for transforming an item _to_ a service. When a `transformTo` pipeline is defined, the `transform` pipeline will only be used for transforming from the service.
 
-`mutateTo` is applied exactly as the `mutate` pipeline – from right to left, after casting, before transforming and mapping fields.
+`transformTo` is applied exactly as the `transform` pipeline – from right to left, after casting, and before transforming and mapping fields.
 
 ### `filter`
 
@@ -115,11 +115,11 @@ When no `filter` pipeline is specified, alle objects are accepted.
 
 Although it is not very common, filters may be object with `from` and `to` functions, and objects will be run through the pipeline with any `to` functions, from right to left, when going _to_ a service.
 
-Filtering _from_ a service happens after the data has been mapped, transformed, mutated, and casted, making sure that a filter function will always operate on Integreat's standard data format. Going _to_ a service, the data object is casted before the filter pipeline is applied, and the mutation, transforming, and mapping will only happen if the object passes all the filters.
+Filtering _from_ a service happens after the data has been mapped, transformed, and casted, making sure that a filter function will always operate on Integreat's standard data format. Going _to_ a service, the data object is casted before the filter pipeline is applied, and the transforming and mapping will only happen if the object passes all the filters.
 
 ### `filterTo`
 
-This works as the `filter` pipeline, but  is used when going _to_ a service. A data object is casted before the `filterTo` pipeline is applied, but filtering happens before any mutation, transforming, and mapping.
+This works as the `filter` pipeline, but  is used when going _to_ a service. A data object is casted before the `filterTo` pipeline is applied, but filtering happens before any transforming and mapping.
 
 When a `filterTo` pipeline is specified, any `to` functions on the `filter` pipeline will be disregarded.
 
