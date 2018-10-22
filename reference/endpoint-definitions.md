@@ -15,9 +15,8 @@ Endpoint definitions are included in the `endpoints` array on a [service definit
     request: <request type>,
     params: {...}
   },
-  requestMapping: {...},
-  requestPath: <path string>,
-  responsePath: <path string>
+  requestMapping: <path string | mapping object>,
+  responseMapping: <path string | mapping object>
   options: {...}
 }
 ```
@@ -47,11 +46,13 @@ The power you get from this, however, is the generic action-based interface to s
 
 ### `requestMapping`
 
-The `requestMapping` object lets you shape the data being sent with the request to a service – sometimes refered to as the request body.
+The `requestMapping` can be a path string or a mapping object, that lets you shape the data being sent with the request to a service – sometimes refered to as the request body.
 
 Default behavior for endpoints without a `requestMapping` object is to send any mapped data as the request body. When there's no `requestMapping` object on the endpoint and no `data` in the action payload, the request will simply be sent without data.
 
-The keys of the `requestMapping` object are dot path notations for properties on the request body, that are typically set to path strings for the `request` object. This is the same notation as for attributes and relationships on schema mappings, but with requestMapping we are going _from_ Integreat _to_ a service.
+When you supply a path string in dot notation, any mapped data will be set on this path on an empty object before being sent as the request body. With the data `[ { id: 'ent1', type: 'entry' } ]` and `requestMapping: 'content.items'`, the data sent with the request will be `{ content: { items: [ { id: 'ent1', type: 'entry' } ]`.
+
+When you supply a mapping object, the keys of the `requestMapping` object are dot path notations for properties on the target request body. The value of these keys are most typically set to path strings pointed at values in the `request` object. \(This is the same notation as for attributes and relationships on schema mappings, but with `requestMapping` we are going _from_ Integreat _to_ a service.\)
 
 You can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md), like `params` or the prepared `endpoint` options, or even `data`. Note that at this point we're talking about data that has been mapped with schema mappers.
 
@@ -98,15 +99,19 @@ With the action payload ...
 Note that in this example we're also imagining that we have schema mappings that doesn't change the data. If we had mappings that change the data items, this would affect the data in the `content` array in the example.
 {% endhint %}
 
-### `requestPath`
+### `responseMapping`
 
-The `requestPath` property is used when sending data to a service. The data or body to send with a request – which will be the result of the `requestMapping` when present, or the `data` mapped with schema mappings – is set at the specified `requestPath` on an emtpy object.
+The `responseMapping` is the opposite of `requestMapping`, and is used to extract a part of the data coming from the service, before passing it on to schema mapping. This is especially handy when several endpoints retrieves the same type of data, but wrapped in different object structures, or when the status of the response is set in the data in way not uniform to the adapter.
 
-With the data `[ { id: 'ent1', type: 'entry' } ]` and `requestPath: 'content.items'`, the data sent with the request will be `{ content: { items: [ { id: 'ent1', type: 'entry' } ]`.
+As for `requestMapping`, the `responseMapping` may be a path string in dot notation. In this case, the path is extracted from the response data, and this is returned as data in the response.
 
-### `responsePath`
+The `responseMapping` may also be a mapping object, with the following allowed keys:
 
-The `responsePath` is the opposite of `requestPath`, and is used to extract a part of the data coming from the service, before passing it on to schema mapping. This is especially handy when several endpoints retrieves the same type of data, but wrapped in different object structures.
+* `data`: The data mapped to this key will be returned as response data
+* `status`: Should map to a string value with any of the allowed status values, and will be set as the status of response, e.g. `'ok'` to signal a successful response.
+* `error`: An error message for the response, mapped from the data. Will be disregarded when status is `'ok'`.
+
+The value of each of these keys may be a path string or an object with `path`, `transform`, etc. just as for attributes and relationships on schema mappings.
 
 ### `options`
 

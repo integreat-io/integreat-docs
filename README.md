@@ -1,8 +1,8 @@
 ---
 description: >-
-  Integreat is a translator between services and datasources, built in
-  JavaScript. It's a gateway API, an integration layer, or an adapter for your
-  APIs, depending on how you use it.
+  Integreat is a translator between services and data sources of different
+  kinds, built in JavaScript. It's a gateway API, an integration layer, or an
+  adapter for your APIs, depending on how you use it.
 ---
 
 # Integreat
