@@ -52,7 +52,11 @@ Default behavior for endpoints without a `requestMapping` object is to send any 
 
 When you supply a path string in dot notation, any mapped data will be set on this path on an empty object before being sent as the request body. With the data `[ { id: 'ent1', type: 'entry' } ]` and `requestMapping: 'content.items'`, the data sent with the request will be `{ content: { items: [ { id: 'ent1', type: 'entry' } ]`.
 
-When you supply a mapping object, the keys of the `requestMapping` object are dot path notations for properties on the target request body. The value of these keys are most typically set to path strings pointed at values in the `request` object. \(This is the same notation as for attributes and relationships on schema mappings, but with `requestMapping` we are going _from_ Integreat _to_ a service.\)
+When you supply a mapping object, the keys of the `requestMapping` object are dot path notations for properties on the target request body. The value of these keys are most typically set to path strings pointed at values in the `request` object.
+
+{% hint style="info" %}
+We're using the same notation as for attributes and relationships on schema mappings, and for `responseMapping`. However, the `requestMapping` is modelled after what you want to send _to_ the service, instead of modelling what you would like to get `from` the service, as in the other cases. This is probably what you would expect, but note that transform pipelines keep their direction. To apply a transform function in `requestMapping`, you would have to define a `transformTo` pipeline or a `transform` pipeline with `.rev()` functions.
+{% endhint %}
 
 You can build a request body from anything that is available on a [request object](../advanced-topics/writing-adapters/request-objects.md), like `params` or the prepared `endpoint` options, or even `data`. Note that at this point we're talking about data that has been mapped with schema mappers.
 
