@@ -13,7 +13,8 @@ Endpoint definitions are included in the `endpoints` array on a [service definit
     schema: <schema id | array of schema ids>,
     scope: <'collection'|'member'|'all'>,
     request: <request type>,
-    params: {...}
+    params: {...},
+    filters: {...}
   },
   requestMapping: <path string | mapping object>,
   responseMapping: <path string | mapping object>
@@ -38,7 +39,8 @@ The following criterias are available:
 * `schema`: By specifying a schema `id`, only requests for data of this type will match this endpoint. To match several schemas, use an array of ids.
 * `scope`: Set to `member` to match only requests for one data item \(actions with an `id` on the payload\), and `collection` to match only requests for sets of data items \(actions without an `id`\). Not specifying scope will match both `member` and `collection`, which is the same as setting it to `all`. 
 * `request`: This matches a request type, which may be `QUERY`, `MUTATION`, or `REMOVAL`. This way you can have one endpoint for querying data and another for mutating it, while disallowing removal by not having an endpoint that matches it.
-* `params`: Finally, you may match specific parameters defined on the request by setting the params this endpoint may handle as keys on the `params` object. The value should be eithter `true` or `false`, to indicate the parameter is required or not. When finding a matching endpoint for a request with a certain parameter, endpoints that require this parameter are given priority over endpoint where it is optional, which again are given priority over endpoints that does not specify the parameter at all.
+* `params`: You may match specific parameters defined on the request by setting the params this endpoint may handle as keys on the `params` object. The value should be eithter `true` or `false`, to indicate the parameter is required or not. When finding a matching endpoint for a request with a certain parameter, endpoints that require this parameter are given priority over endpoint where it is optional, which again are given priority over endpoints that does not specify the parameter at all.
+* `filters`: An object with paths as keys and [JSON Schema](http://json-schema.org) as values. All provided paths must be valid according to their schemas for this endpoint to be a match. Currently, this is used to map request data only, so every path should start with `data.`.
 
 Defining a `match` object is not the easiest part of Integreat, and if you're not careful you might end up having Integreat picking other endpoints than you expect. A general rule is to have as few endpoints as possible, start with the more general, and do overrides with more specific endpoints as needed.
 
