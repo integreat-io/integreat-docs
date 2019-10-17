@@ -1,3 +1,7 @@
+---
+description: '[Needs an update]'
+---
+
 # Core Concepts
 
 Integreat is built on essentially three core concepts:
