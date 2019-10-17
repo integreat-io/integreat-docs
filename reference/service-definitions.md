@@ -7,7 +7,7 @@ The service definitions object looks like this:
 ```javascript
 {
   <id>: {
-    adapter: <adapter id>,
+    transport: <transport id>,
     options: { ... },
     auth: <auth def | auth id | true>,
     meta: <schema id>,
@@ -28,15 +28,15 @@ The service definitions object looks like this:
 
 ### `id`
 
-This is a unique id for a service definition, which will be used to reference the service throughtout Integreat. A typical use for the `id` is when you want to specify the source in an action.
+This is a unique id for a service definition, which will be used to reference the service throughout Integreat. A typical use for the `id` is when you want to specify the service in an action or in a flow.
 
-### `adapter`
+### `transport`
 
-Specifies the adapter to use for this service. This is an `id` string, that should match one of the adapters passed to the `integreat()` method.
+Specifies the transport to use for this service. This is an `id` string, that should match one of the transports passed to the `Integreat.create()` method.
 
 ### `options`
 
-The options object is passed as is to the adapter, so its content will vary based on the adapter you choose. It is first passed to the `prepareEndpoint()` method on the adapter togetheter with each endpoint's `options` object, and then to the `connect()` method on the adapter.
+The options object is passed blindly to the transport, so its content will vary based on the transport you choose. It is first passed to the `prepareEndpoint()` method on the adapter together with each endpoint's `options` object, and then to the `connect()` method on the transport.
 
 The most common options property is `baseUri`.
 
@@ -52,21 +52,23 @@ In cases where the service is authenticated by other means, e.g. by including us
 
 ### `endpoints`
 
-A service should be defined with at least one endpoint, but there's no upper limit to how many endpoints you may supply. The endpoints are defined with a `match` object, specifying the cases each endpoint is intended to serve, with varying degree of specifity. This is powerful, as it lets Integreat respond to generic requests for data and match it to the relevant endpoint for each specific service, without requiring the "requester" to know anything about the service it is getting data from. It is also potentially quite tricky, as one mistake in the `match` objects could mess up the matching algorithm.
+A service should be defined with at least one endpoint, but there's no upper limit to how many endpoints you may supply. You may think of endpoints as overrides to the service definitions. Each endpoint may have its own transport options, schema mappings, etc., that will override or merge with what is defined on the service.
 
-Integreat will always pick the endpoint with the highest specificity that matches the request in question. A typical approach is therefore to define one or more general endpoints, and set up "exceptions" with more specific matching criteries.
+An endpoint is defined with a `match` object, specifying the cases the endpoint is intended to serve, with varying degree of specificity. This is powerful, as it lets Integreat respond to generic requests for data and match it to the relevant endpoint for each specific service, without requiring the "requester" to know anything about the service it is getting data from. It is also potentially quite tricky, as one mistake in the `match` objects could mess up the matching algorithm.
+
+Integreat will always pick the endpoint with the highest specificity that matches the request in question. A typical approach is therefore to define one or more general endpoints, and set up "exceptions" with more specific matching criteria.
 
 An endpoint may also have an `id`, which allows an action to be defined with a specific endpoint in mind, and will override the `match` objects. This should only be used as a last resort, though, as it is always best to keep service specifics away from action definitions.
 
-The order of the endpoints in a service definition has noe effect, except for cases where two endpoints with the same level of match specificity would both match a request. In this case, the first match will be picked.
+The order of the endpoints in a service definition has no effect, except for cases where two endpoints with the same level of match specificity would both match a request. In this case, the first match will be picked.
 
 See Endpoint definitions for details.
 
 ### `mappings`
 
-A mapping defintion tells Integreat how to map between a schema and the data coming from a service or being sent to a service. You should include one mapping definition for every schema a service can handle.
+A mapping defintion tells Integreat how to map between a schema and the data coming from a service or being sent to a service. You should include one mapping definition for every schema a service can handle. Note that endpoints may have their own set of schema mappings, that will override the service schema mappings.
 
-The `matching` object should have the `id` of each schema as keys, which should be set to the `id` of a mapping definition or a complete mapping definition object. The former option is for reusing mapping definitions across services and schemas, or for cases when it is easier to have mapping definition in seperate files – e.g. when service definitions grow big.
+The `matching` object should have the `id` of schemas as keys, with the `id` of a mapping definition or a complete mapping definition object, as a value. The former option is for reusing mapping definitions across services and schemas, or for cases when it is easier to have mapping definition in separate files – e.g. when service definitions grow big.
 
 See Mapping definitions for details.
 

@@ -3,6 +3,7 @@
 * [Integreat](README.md)
 * [Introduction](introduction/README.md)
   * [Motivation](introduction/motivation.md)
+  * [Philosophy](introduction/philosophy.md)
   * [Core Concepts](introduction/core-concepts.md)
   * [Examples](introduction/examples.md)
 * [Basics](basics.md)
