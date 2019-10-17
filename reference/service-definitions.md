@@ -15,7 +15,7 @@ The service definitions object looks like this:
       <endpoint definition>,
       ...
     ],
-    mappings: {
+    schemaMappings: {
       <schema id>: <mapping definition | mapping id>,
       ...
     }
@@ -64,11 +64,11 @@ The order of the endpoints in a service definition has no effect, except for cas
 
 See Endpoint definitions for details.
 
-### `mappings`
+### `schemaMappings`
 
-A mapping defintion tells Integreat how to map between a schema and the data coming from a service or being sent to a service. You should include one mapping definition for every schema a service can handle. Note that endpoints may have their own set of schema mappings, that will override the service schema mappings.
+A mapping definition tells Integreat how to map between a schema and the data coming from a service or being sent to a service. You should include one mapping definition for every schema a service can handle. Note that endpoints may have their own set of schema mappings, that will override the service schema mappings.
 
-The `matching` object should have the `id` of schemas as keys, with the `id` of a mapping definition or a complete mapping definition object, as a value. The former option is for reusing mapping definitions across services and schemas, or for cases when it is easier to have mapping definition in separate files – e.g. when service definitions grow big.
+The `schemaMatchings` object should have the `id` of schemas as keys, with the `id` of a mapping definition or a [MapTransform](https://github.com/integreat-io/map-transform) pipeline/mutation object, as a value. The former option is for reusing mapping definitions across services and schemas, or for cases when it is easier to have mapping definition in separate files – e.g. when service definitions grow big.
 
-See Mapping definitions for details.
+See [Mapping definitions](mapping-definitions.md) for details.
 
