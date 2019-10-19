@@ -8,9 +8,11 @@ An authenticator is an object with a specified set of methods:
 
 ```javascript
 {
-    authenticate: async (options) => authentication,
-    isAuthenticated: (authentication) => boolean,
+  authenticate: async (options) => authentication,
+  isAuthenticated: (authentication) => boolean,
+  authentication {
     as...: (authentication) => ({ ... })
+  }
 }
 ```
 
@@ -53,13 +55,13 @@ This method will simply return `true` when the given `authentication` object ind
 
 If for instance an authentication token has been retrieved, but is timed out on the server, `isAuthenticated()` should still return `true`, as it should not check with the server. If, on the other hand, the token came with an expiration time and this is set on the `authentication` object, the method should check whether this time is passed before returning `true` or `false`.
 
-### `as...`
+### `authentication.as...`
 
 ```javascript
 as...: (authentication) => ({ ... })
 ```
 
-The authenticator object may have any number of `as...()` methods. When the `status` of the `authentication` object is `granted`, these methods will return an object – or any other type that makes sense to the target adapters – with the properties or values relevant for each authenticator.
+The `authentication` object may have any number of `as...()` methods. When the `status` of the `authentication` object is `granted`, these methods will return an object – or any other type that makes sense to the target adapters – with the properties or values relevant for each authenticator.
 
 The simplest authenticator is the `token` authenticator, which will accept an `options` object with some properties and return the same object when `asObject()` is called – like `{token: "x8q17fr3i0"}`, as a random example. An adapter may specify in its documentation that this is the authenticator it expects, and what props to set on the `options` object. For other adapters, this authenticator will not help at all.
 

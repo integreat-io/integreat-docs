@@ -15,6 +15,7 @@
   * [Writing authenticators](advanced-topics/writing-authenticators/README.md)
     * [Authenticator interface](advanced-topics/writing-authenticators/authenticator-interface.md)
 * [Reference](reference/README.md)
+  * [Schema definitions](reference/schema-definitions.md)
   * [Service definitions](reference/service-definitions.md)
   * [Mapping definitions](reference/mapping-definitions.md)
   * [Endpoint definitions](reference/endpoint-definitions.md)
