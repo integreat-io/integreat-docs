@@ -8,7 +8,7 @@ description: >-
 # Integreat
 
 {% hint style="info" %}
-This documentation is very much work in progress and is written for the upcoming 0.8 release of Integreat. For information on the 0.7 version, see [the README on Gihub](https://github.com/integreat-io/integreat).
+This documentation is very much work in progress and is written for the 0.8 release of Integreat.
 {% endhint %}
 
 The basic idea of Integreat is to make it easy to define a set of data sources and expose them through a well defined interface, to abstract away the specifics of each service, and map their data to defined schemas.
